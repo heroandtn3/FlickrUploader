@@ -14,6 +14,7 @@ key = api_secret + '&'
 oauth_token = ''
 oauth_token_secret = ''
 oauth_verifier = ''
+CONFIG_FILE = '/home/heroandtn3/stupid/programming/python/source/FlickrUploader/flickr.cfg'
 
 def get_oauth_token():
     '''
@@ -32,7 +33,7 @@ def get_oauth_token():
         pairs = r.split('&')
         oauth_token = pairs[1].split('=')[1]
         oauth_token_secret = pairs[2].split('=')[1]
-        key += oauth_token_secret
+        key = api_secret + '&' + oauth_token_secret
 
 def authorize():
     '''
@@ -46,7 +47,7 @@ def authorize():
     oauth_verifier = line.strip()
 
 def access_token():
-    global oauth_verifier, oauth_token, oauth_token_secret
+    global oauth_verifier, oauth_token, oauth_token_secret, key
     url = 'http://www.flickr.com/services/oauth/access_token'
     params = {
         'oauth_token': oauth_token,
@@ -57,6 +58,7 @@ def access_token():
     fields = resp.text.split('&')
     oauth_token = fields[1].split('=')[1]
     oauth_token_secret = fields[2].split('=')[1]
+    key = api_secret + '&' + oauth_token_secret
 
 
 def _gen_unoauth_params(method, url, params={}):
@@ -95,10 +97,11 @@ def save_config():
         config['oauth_token'] = oauth_token
         config['oauth_token_secret'] = oauth_token_secret
         config['oauth_verifier'] = oauth_verifier
-        f = open('flickr.cfg', 'w')
+        f = open(CONFIG_FILE, 'w')
         f.write(json.dumps(config))
+        f.close()
 
-def load_config(filename='flickr.cfg'):
+def load_config(filename=CONFIG_FILE):
     try:
         f = open(filename)
         data = ''
@@ -116,10 +119,11 @@ def load_config(filename='flickr.cfg'):
         f.close()
         return True
     except:
-        f.close()
         return False
 
 def gen_config():
+    global key
+    key = api_secret + '&'
     get_oauth_token()
     authorize()
     access_token()
