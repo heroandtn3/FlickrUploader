@@ -7,6 +7,7 @@ import hmac
 import hashlib
 import requests
 import json
+import os.path
 
 api_key = '34c6e64bd0e8a8e72e5cc6f0794d0c93'
 api_secret = '9bc9e08ac4fc7abc'
@@ -14,7 +15,7 @@ key = api_secret + '&'
 oauth_token = ''
 oauth_token_secret = ''
 oauth_verifier = ''
-CONFIG_FILE = '/home/heroandtn3/stupid/programming/python/source/FlickrUploader/flickr.cfg'
+CONFIG_FILE = 'flickr.cfg'
 
 def get_oauth_token():
     '''
@@ -92,12 +93,12 @@ def _gen_signature(method, url, parameters={}):
     return signature
 
 
-def save_config():
+def save_config(filename=CONFIG_FILE):
         config = dict()
         config['oauth_token'] = oauth_token
         config['oauth_token_secret'] = oauth_token_secret
         config['oauth_verifier'] = oauth_verifier
-        f = open(CONFIG_FILE, 'w')
+        f = open(filename, 'w')
         f.write(json.dumps(config))
         f.close()
 
@@ -121,13 +122,13 @@ def load_config(filename=CONFIG_FILE):
     except:
         return False
 
-def gen_config():
+def gen_config(filename=CONFIG_FILE):
     global key
     key = api_secret + '&'
     get_oauth_token()
     authorize()
     access_token()
-    save_config()
+    save_config(filename)
 
 def gen_oauth_params(method, url, params={}):
     params['oauth_token'] = oauth_token
@@ -135,8 +136,10 @@ def gen_oauth_params(method, url, params={}):
     return params
 
 def do_oauth():
-    if not load_config():
-        gen_config()
+    cur_dir = os.path.dirname(os.path.realpath(__file__))
+    filename = os.path.join(cur_dir, CONFIG_FILE)
+    if not load_config(filename):
+        gen_config(filename)
 
 if __name__ == '__main__':
     do_oauth()
