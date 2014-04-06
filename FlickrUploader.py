@@ -4,6 +4,7 @@ import xml.etree.ElementTree as ET
 import requests
 import flickr_auth as auth
 import sys
+from urllib.request import urlopen
 
 class FlickrApi():
     api_key = '34c6e64bd0e8a8e72e5cc6f0794d0c93'
@@ -33,8 +34,23 @@ class FlickrApi():
         print(resp.text)
 
     def upload_photo(self, file_name):
+        f = open(file_name, 'rb')
+        self.upload(f)
+
+
+    def upload_from_url(self, url):
+        """
+        Upload photo from image's url.
+        """
+        data = urlopen(url).read()
+        self.upload(data)
+
+    def upload(self, f):
+        """
+        Upload photo from file object.
+        """
         url = 'http://up.flickr.com/services/upload'
-        files = {'photo': open(file_name, 'rb')}
+        files = {'photo': f}
         params = dict()
         params['is_public'] = '0'
         params = auth.gen_oauth_params('POST', url, params)
@@ -67,6 +83,7 @@ if __name__ == '__main__':
     api = FlickrApi()
     photo = sys.argv[1]
     api.upload_photo(photo)
+    #api.upload_from_url(photo)
     #api.test_login()
     #api.get_upload_status()
     #api.get_photo_links('10513318854')
