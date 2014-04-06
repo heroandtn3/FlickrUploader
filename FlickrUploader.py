@@ -4,6 +4,7 @@ import xml.etree.ElementTree as ET
 import requests
 import flickr_auth as auth
 import sys
+import json
 from urllib.request import urlopen
 from collections import OrderedDict
 
@@ -123,7 +124,28 @@ class FlickrApi():
             return links
         else:
             print("There's something wrong here")
-        
+    
+    def photosets_add(self, photoset_id, photo_id):
+        """
+        Add a photo to the end of an existing photoset.
+
+        Return: True if OK, False if not
+        """
+        url = 'http://api.flickr.com/services/rest'
+        params = {
+            'api_key': self.api_key,
+            'method': 'flickr.photosets.addPhoto',
+            'format': 'json',
+            'nojsoncallback': '1',
+            'photoset_id': photoset_id,
+            'photo_id': photo_id
+        }
+        params = auth.gen_oauth_params('POST', url, params)
+        resp = requests.post(url, params=params)
+        print(resp.text)
+        data = json.loads(resp.text)
+        return (data.get('stat') == 'ok')
+
 
 if __name__ == '__main__':
     api = FlickrApi()
