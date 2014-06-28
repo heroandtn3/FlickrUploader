@@ -16,7 +16,7 @@ class FlickrApi():
         auth.do_oauth()
 
     def test_login(self):
-        url = 'http://api.flickr.com/services/rest'
+        url = 'https://api.flickr.com/services/rest'
         parameters = dict()
         parameters['nojsoncallback'] = '1'
         parameters['format'] = 'json'
@@ -26,7 +26,7 @@ class FlickrApi():
         print(resp.text)
 
     def get_upload_status(self):
-        url = 'http://api.flickr.com/services/rest'
+        url = 'https://api.flickr.com/services/rest'
         parameters = dict()
         parameters['nojsoncallback'] = '1'
         parameters['format'] = 'json'
@@ -79,7 +79,7 @@ class FlickrApi():
 
         Return: photo's ID if upload successful.
         """
-        url = 'http://up.flickr.com/services/upload'
+        url = 'https://up.flickr.com/services/upload'
         files = {'photo': f}
         params = {
             'title': title,
@@ -108,7 +108,7 @@ class FlickrApi():
 
         Return: dict of links.
         """
-        url = 'http://api.flickr.com/services/rest'
+        url = 'https://api.flickr.com/services/rest'
         params = dict()
         params['api_key'] = self.api_key
         params['photo_id'] = photoid
@@ -131,7 +131,7 @@ class FlickrApi():
 
         Return: True if OK, False if not
         """
-        url = 'http://api.flickr.com/services/rest'
+        url = 'https://api.flickr.com/services/rest'
         params = {
             'api_key': self.api_key,
             'method': 'flickr.photosets.addPhoto',
